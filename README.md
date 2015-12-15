@@ -17,9 +17,13 @@ Analisa yang digunakan dalam merancang web-nya.
 Cara yang cukup memudahkan viewer dalam memahami data tersebut adalah dengan memberikan perbandingan yang jelas dari setiap trayek, dengan bar-chart maka dapat dengan mudah terlihat mana trayek yang paling panjang jarak tempuhnya, dan berapa unit ketersediaannya.
   maka : 
 1. Saya membuat terlebih dahulu bar-chart-nya.
+
 2. Menambahkan animasi sebagai nilai tambah.
+
 3. Saya mendesain layout sederhana sebagai tempat bar-chartnya, layout simple tapi diharapkan dapat menunjukan hal tersebut.
+
 4. Menambahkan link-link yang berhubungan.
+
 5. Menambah fitur share.
 
 Link-link profile untuk lebih mengenal developer :
