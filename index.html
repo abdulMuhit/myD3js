@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Perbandingan Jumlah angkot per trayek per jarak di Bandung" />
+<meta name="keywords" content="angkot Bandung" />
+	
+<meta property="og:description" content="Angkot Bandung" />
+<meta property="og:title" content="Perbandingan jumlah angkot per jarak di Bandung" />
+<meta property="og:type" content="article" />
+<!--<meta property="og:image" content="snapshot.png" /> belum -->
+<!--<meta property="og:site_name" content="fantaseen.com" /> belum -->
+    
+<script src="//d3js.org/d3.v3.min.js"></script>
+<title>Perbandingan Trayek angkot di Bandung</title>
+<meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
+<!--  -->
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<style>
+* { 
+	font-size: 1em;
+	font-family: clear_sansregulas;
+	font-weight: bold;
+	font-style: normal;
+	color:#B5BED4;
+}
+
+body {
+
+   cursor:default;
+   padding:3px;
+   cursor:auto;
+   width: 70%;
+   min-width: 760px;
+   max-width: 1344px;
+   max-height: 900px;
+   height:600px;
+   min-height: 100%;
+   position: relative;
+   margin: 20px auto 0 auto;
+   background: #B6BFC9;
+   background: rgba(182, 191, 201, 0.8);
+   -webkit-box-shadow:0 0 3px 2px rgba(0, 0, 0, 0.12);
+   -moz-box-shadow:0 0 3px 2px rgba(0, 0, 0, 0.12);
+   box-shadow:0 0 3px 2px rgba(0, 0, 0, 0.12);
+   border-radius:12px;
+   
+}
+
+header {
+	max-width:900px;
+	width: 100%;
+	height:133px;
+	float:none;
+	background-color: #2C3E50;
+	border-radius:16px;
+}
+
+#logo {
+	max-width:150px;
+	width: 15%;
+	height:133px;
+	float:left;
+    white-space: nowrap;
+    text-align: center;
+}
+
+#logo:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#logo img {
+	max-width:100px;
+	vertical-align:middle;
+}
+
+
+#contentheader {
+	float:right;
+	max-width:900px;
+	width:80%;
+	height:133px;
+}
+
+#contentheader h1 {
+	text-align: center;
+	margin: 21px;
+	font-size: 1.3em;
+	font-style: oblique;
+}
+
+#contentheader h3 {
+	text-align:right;
+	color:black;
+}
+
+.data-layout-wrapper {
+	
+	margin: 2px auto 0 auto;
+	max-width:900px;
+	width: 100%;
+	height:400px;
+	float:none;
+	background-color: #768B7E;
+	padding-top: 5px;
+	border-radius: 10px;
+}
+
+.data-layout-cell {
+   display: table-cell;
+   vertical-align: top;
+}
+
+section {
+	border: medium solid rgb(146, 165, 182);
+	width: 72%;
+	float:left;
+}
+
+aside {
+	height: 400px;
+	width: 25%;
+	float:right;
+
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
+}
+
+rect:hover{
+	fill: orange;
+}
+
+	
+div.tooltip {	
+    position: absolute;			
+    text-align: center;							
+    background: steelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;		
+	z-index: 901;
+	line-height: 3%;
+	
+}
+
+div.tooltip2 {	
+	padding:0.3%;
+    text-align: center;							
+    font: 12px sans-serif;		
+    background: #344658;	
+    border: 1px;		
+    border-radius: 8px;			
+    pointer-events: none;		
+	z-index: 901;
+	line-height: 3%;
+	height: 200px;
+	width:96%;
+	line-height: 175%;
+	color:#B5BED4;
+
+}
+
+
+.sort {
+  padding:8px 30px;
+  border-radius: 6px;
+  border:none;
+  display:inline-block;
+  color:#B5BED4;
+  text-decoration: none;
+  background-color: #344658;
+  height:30px;
+  margin:3px;
+}
+.sort:hover {
+  text-decoration: none;
+  background-color:#1b8aba;
+}
+.sort:focus {
+  outline:none;
+}
+.sort:after {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  position: relative;
+  top:-10px;
+  right:-5px;
+}
+
+footer {
+	height:100px;
+	clear: both;
+	background-color: #344658;
+	max-width:900px;
+	width: 100%;
+	border-radius: 10px;
+	
+}
+#left-footer {
+	
+	height:100px;
+	float:left;
+	background-color: #344658;
+	max-width:100px;
+	width: 14%;
+	float:left;
+    white-space: nowrap;
+    text-align: center;
+	margin:1px;
+	border-radius: 10px;
+}
+
+#left-footer:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#left-footer img {
+	max-width:100px;
+	vertical-align:middle;
+	border-radius: 10px;
+}
+
+#middle-footer {
+	
+	height:100px;
+	float:left;
+	background-color: #2C3E50;
+	color:#FFF;
+	border-radius: 10px;
+	max-width:695px;
+	width: 77%;
+	float:left;
+    white-space: nowrap;
+    text-align: center;
+	display: inline-block;
+	
+}
+
+
+
+#social {
+
+}
+
+#credits {
+
+}
+
+#right-footer {
+	
+	height:100px;
+	float:right;
+	background-color: #344658;
+	max-width:100px;
+	width: 14%;
+	float:right;
+    white-space: nowrap;
+    text-align: center;
+	border-radius: 10px;
+}
+
+#right-footer:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#right-footer img {
+	max-width:100px;
+	vertical-align:middle;
+	margin:1px;
+	border-radius: 10px;
+	
+}
+
+
+
+<!-- /* iPhones and other mobiles*/ -->
+@media only screen and (max-width: 480px) {
+
+
+}
+	
+<!-- END media only screen and (max-width: 480px) -->
+
+</style>
+
+</head>
+
+<body>
+<header>
+<div id="logo">
+
+<a href="http://fantaseen7.blogspot.co.id/" target="_blank">
+  <img src="logofantaseen128.png" alt="click to fantaseen blog">
+</a>
+  </div>
+<div id="contentheader">
+<h1>Perbandingan Trayek, Jumlah Angkot dan Jarak Tempuhnya di Kota Bandung<br>Tahun 2014</h1>
+<h3 style="font-size:10px">*belum di optimasi untuk mobile view</h3>
+</div>
+</header>
+
+<div class="data-layout-wrapper">
+
+
+<section id="canvas1" class="data-layout-cell">
+
+<script>
+var w = 600;
+var h = 350;
+
+	d3.csv('http://data.go.id/dataset/23eba11d-8ddd-4bc7-b5e2-78a25d71ab0d/resource/45897e6c-2a7e-416f-b402-d8354e2815b7/download/datatrayekangkot.csv', function(data) {
+	data.forEach(function(d) {
+		
+		d.KODE = d.KODE;
+		d.NO = +d.NO;
+		d['LINTASAN TRAYEK'] = d['LINTASAN TRAYEK']
+		d.JARAK = +d.JARAK;
+        d['JUMLAH KENDARAAN'] = +d['JUMLAH KENDARAAN'];
+		d.jumlahbagijarak = Math.round(d['JUMLAH KENDARAAN'] / d.JARAK);
+		
+    });
+console.log(data);		
+
+var mode="JARAK";
+
+// Define the div for the tooltip
+var div = d3.select('#canvas1').append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+	
+// Define the div for the tooltip 2
+var tolltip2 = d3.select('aside').append("div")
+	.attr("class", "tooltip2")
+    .style("opacity", 0);
+				
+var xScale = d3.scale.ordinal()
+				.domain(d3.range(data.length))
+				.rangeRoundBands([0, w], 0.05); // lebar bar	
+				//.rangePoints([0, width]);
+				
+var key = function(d) {
+	return d.NO;
+};
+
+
+//Create SVG element
+var svg = d3.select("#canvas1")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+			
+build1();
+
+function build1(){
+
+var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.jumlahbagijarak;})])
+				.range([0, h]);
+							
+//Create bars				
+svg.selectAll("rect")
+			.data(data, key)
+			.enter()
+			.append("rect")
+			.attr("x", function(d, i) {
+					return xScale(i);
+			})
+
+			.attr("y", function(d) {
+					return h - yScale(d.jumlahbagijarak) +20;
+			}) 
+     
+			.attr("width", xScale.rangeBand())
+   
+			.attr("height", function(d) {
+					return yScale(d.jumlahbagijarak);
+			})
+   
+			.attr("fill", function(d) {
+					return "rgb(8, 141, " + Math.round(d.jumlahbagijarak * 10) + ")"; // warna semakin biru = semakin jauh jarak tempuhnya
+   })
+   
+    .on("mouseover", function(d) {
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0.9);	
+	
+				div.html("<h3>"+ d['LINTASAN TRAYEK']+"</h3>"+"<br>"+"<h4>"+"Jarak Tempuh (Km) = "+ d.JARAK+" km"+"</h4>"+"<br>"+"<h4>"+"Jumlah Kendaraan = "+ d['JUMLAH KENDARAAN']+" Unit"+"</h4>"+"<br>"+"<h4>"+"Jumlah Kendaraan/Jarak = "+ d.jumlahbagijarak+" Unit/Km"+"</h4>")
+				
+                .style("left", (d3.event.pageX - 300) + "px")		
+                .style("top", (d3.event.pageY - 280) + "px");	
+				
+            })
+
+        .on("mouseout", function(d) {
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+				
+        })
+		
+		 .on('click', function(d) {		
+            tolltip2.transition()
+			    .duration(500)		
+                .style("opacity", 0.9);	
+				tolltip2.html("<p>"+ d['LINTASAN TRAYEK']+"<br><br>Jarak Tempuh (Km) ="+ d.JARAK+" km"+"<br><br>"+"Jumlah Kendaraan ="+ d['JUMLAH KENDARAAN']+" Unit"+"<br><br>"+"Jumlah Kendaraan/Jarak ="+ d.jumlahbagijarak+" Unit/Km"+"</p>");
+				
+        }); 
+   
+   //Create labels
+		svg.selectAll("text")
+			.data(data, key) // berdasarkan value
+			.enter()
+			.append("text")
+			.text(function(d) {
+					return d.jumlahbagijarak; // ini tulisan di atas
+			})
+			.attr("text-anchor", "middle")
+			.attr("x", function(d, i) {
+					return xScale(i) + xScale.rangeBand() / 2;
+			})
+			.attr("y", function(d) {
+				return h - yScale(d.jumlahbagijarak) + 14;
+			})
+			.attr("font-family", "sans-serif") 
+			.attr("font-size", "19px")
+			.attr("fill", "#453d24");
+
+}
+
+	
+// sorter perbaiki lagi	
+
+
+var sortOrder = false;
+var sortBars = function () {
+
+	if (mode=="JARAK") {
+	
+	var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.JARAK;})])
+				.range([0, h]); 
+	
+	sortOrder = !sortOrder;
+    sortItems = function (a, b) {
+        if (sortOrder) {
+            return a.JARAK - b.JARAK;
+        }
+        return b.JARAK - a.JARAK;
+    };
+
+    svg.selectAll("rect")
+	
+        .sort(sortItems)
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .attr("x", function (d, i) {
+        return xScale(i);
+    });
+
+    svg.selectAll('text')
+		
+        .sort(sortItems)
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .text(function (d) {
+        return d.JARAK;
+    })
+        .attr("text-anchor", "middle")
+        .attr("x", function (d, i) {
+        return xScale(i) + xScale.rangeBand() / 2;
+    })
+        .attr("y", function (d) {
+        return h - yScale(d.JARAK) + 14;
+    });
+	
+	} else if (mode=="jumlah") {
+	
+	
+	var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d['JUMLAH KENDARAAN'];})])
+				.range([0, h]); 
+				
+	sortOrder = !sortOrder;
+    sortItems = function (a, b) {
+        if (sortOrder) {
+            return a['JUMLAH KENDARAAN'] - b['JUMLAH KENDARAAN'];
+        }
+        return b['JUMLAH KENDARAAN'] - a['JUMLAH KENDARAAN'];
+    };
+
+    svg.selectAll("rect")
+		
+        .sort(sortItems)
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .attr("x", function (d, i) {
+        return xScale(i);
+    });
+
+    svg.selectAll('text')
+		
+        .sort(sortItems)
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .text(function (d) {
+        return d['JUMLAH KENDARAAN'];
+    })
+        .attr("text-anchor", "middle")
+        .attr("x", function (d, i) {
+        return xScale(i) + xScale.rangeBand() / 2;
+    })
+        .attr("y", function (d) {
+        return h - yScale(d['JUMLAH KENDARAAN']) + 14;
+    });
+	
+	} else {
+	
+	var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.jumlahbagijarak;})])
+				.range([0, h]); 
+				
+	sortOrder = !sortOrder;
+    sortItems = function (a, b) {
+					if (sortOrder) {
+						return a.jumlahbagijarak - b.jumlahbagijarak;
+				}
+					return b.jumlahbagijarak - a.jumlahbagijarak;
+				};
+
+		svg.selectAll("rect")
+			
+			.sort(sortItems)
+			.transition()
+			.delay(function (d, i) {
+			return i * 50;
+		})
+			.duration(1000)
+			.attr("x", function (d, i) {
+			return xScale(i);
+		});
+
+		svg.selectAll('text')
+			
+			.sort(sortItems)
+			.transition()
+			.delay(function (d, i) {
+			return i * 50;
+		})
+			.duration(1000)
+			.text(function (d) {
+			return d.jumlahbagijarak;
+		})
+			.attr("text-anchor", "middle")
+			.attr("x", function (d, i) {
+			return xScale(i) + xScale.rangeBand() / 2;
+		})
+			.attr("y", function (d) {
+			return h - yScale(d.jumlahbagijarak) + 14;
+		});
+	
+	}
+    
+};
+
+
+function reset() {
+
+
+if (mode=="JARAK") {
+
+
+	var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.JARAK;})])
+				.range([0, h]); 
+	
+	svg.selectAll("rect")
+		
+		.sort(function(a, b){
+			return a.NO - b.NO;
+		})
+		.transition()
+        .delay(function (d, i) {
+        return i * 50;
+		})
+        .duration(1000)
+        .attr("x", function (d, i) {
+        return xScale(i);
+		});
+		
+	svg.selectAll('text')
+		
+        .sort(function(a, b){
+			return a.NO - b.NO;
+		})
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .text(function (d) {
+        return d.JARAK;
+    })
+        .attr("text-anchor", "middle")
+        .attr("x", function (d, i) {
+        return xScale(i) + xScale.rangeBand() / 2;
+    })
+        .attr("y", function (d) {
+        return h - yScale(d.JARAK) + 14;
+    });
+} else if (mode=="jumlah"){
+
+
+	var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d['JUMLAH KENDARAAN'];})])
+				.range([0, h]); 
+
+	svg.selectAll("rect")
+		
+		.sort(function(a, b){
+			return a.NO - b.NO;
+		})
+		.transition()
+        .delay(function (d, i) {
+        return i * 50;
+		})
+        .duration(1000)
+        .attr("x", function (d, i) {
+        return xScale(i);
+		});
+		
+	svg.selectAll('text')
+		
+        .sort(function(a, b){
+			return a.NO - b.NO;
+		})
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .text(function (d) {
+        return d['JUMLAH KENDARAAN'];
+    })
+        .attr("text-anchor", "middle")
+        .attr("x", function (d, i) {
+        return xScale(i) + xScale.rangeBand() / 2;
+    })
+        .attr("y", function (d) {
+        return h - yScale(d['JUMLAH KENDARAAN']) + 14;
+    });
+} else {
+
+
+var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.jumlahbagijarak;})])
+				.range([0, h]); 
+
+	svg.selectAll("rect")
+		
+		.sort(function(a, b){
+			return a.NO - b.NO;
+		})
+		.transition()
+        .delay(function (d, i) {
+        return i * 50;
+		})
+        .duration(1000)
+        .attr("x", function (d, i) {
+        return xScale(i);
+		});
+		
+	svg.selectAll('text')
+        .sort(function(a, b){
+			return a.NO - b.NO;
+		})
+        .transition()
+        .delay(function (d, i) {
+        return i * 50;
+    })
+        .duration(1000)
+        .text(function (d) {
+        return d.jumlahbagijarak;
+    })
+        .attr("text-anchor", "middle")
+        .attr("x", function (d, i) {
+        return xScale(i) + xScale.rangeBand() / 2;
+    })
+        .attr("y", function (d) {
+        return h - yScale(d.jumlahbagijarak) + 14;
+    });
+
+};
+
+
+
+}
+
+	
+//----------------------------------- another build change update data	
+			
+function update1() {
+
+ mode="JARAK";
+ 
+ var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.JARAK;})])
+				.range([0, h]);
+
+//update bars
+svg.selectAll("rect")
+   .data(data, key)
+   .attr("x", function(d, i) {
+		return xScale(i);
+   })
+   
+   .attr("y", function(d) {
+		return h - yScale(d.JARAK) + 20;
+   }) 
+     
+   .attr("width", xScale.rangeBand())
+   
+   .attr("height", function(d) {
+		return yScale(d.JARAK);
+   })
+   
+   .attr("fill", function(d) {
+		return "rgb(8, 141, " + Math.round(d.JARAK * 10) + ")"; // warna semakin biru = semakin jauh jarak tempuhnya
+   })
+
+//update labels
+svg.selectAll("text")
+   .data(data, key) // berdasarkan value
+   .text(function(d) {
+		return d.JARAK; // ini tulisan di atas
+   })
+   .attr("text-anchor", "middle")
+   .attr("x", function(d, i) {
+		return xScale(i) + xScale.rangeBand() / 2;
+   })
+   .attr("y", function(d) {
+		return h - yScale(d.JARAK) + 14;
+   })
+   
+
+};
+
+ 
+
+//-------------------------------- update 2
+function update2() {
+
+mode="jumlah";
+
+
+var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d['JUMLAH KENDARAAN'];})])
+				.range([0, h]);
+				
+//update bars
+svg.selectAll("rect")
+   .data(data, key)
+   .attr("x", function(d, i) {
+		return xScale(i);
+   })
+   
+   .attr("y", function(d) {
+		return h - yScale(d['JUMLAH KENDARAAN']) +20;
+   }) 
+     
+   .attr("width", xScale.rangeBand())
+   
+   .attr("height", function(d) {
+		return yScale(d['JUMLAH KENDARAAN']);
+   })
+   
+   .attr("fill", function(d) {
+		return "rgb(8, 141, " + Math.round(d['JUMLAH KENDARAAN'])+")"; // warna semakin biru = semakin jauh jarak tempuhnya
+   })
+
+//update labels
+svg.selectAll("text")
+   .data(data, key) // berdasarkan value
+   .text(function(d) {
+		return d['JUMLAH KENDARAAN']; // ini tulisan di atas
+   })
+   .attr("text-anchor", "middle")
+   .attr("x", function(d, i) {
+		return xScale(i) + xScale.rangeBand() / 2;
+   })
+   .attr("y", function(d) {
+		return h - yScale(d['JUMLAH KENDARAAN']) + 14;
+   })
+   				
+}
+												
+//----------------------- update 3
+function update3() {
+
+mode="rata";
+
+var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d) {return d.jumlahbagijarak;})])
+				.range([0, h]);
+				
+//update bars
+svg.selectAll("rect")
+   .data(data, key)
+   .attr("x", function(d, i) {
+		return xScale(i);
+   })
+   
+   .attr("y", function(d) {
+		return h - yScale(d.jumlahbagijarak) +20;
+   }) 
+     
+   .attr("width", xScale.rangeBand())
+   
+   .attr("height", function(d) {
+		return yScale(d.jumlahbagijarak);
+   })
+   
+   .attr("fill", function(d) {
+		return "rgb(8, 141, " + Math.round(d.jumlahbagijarak * 10) + ")"; // warna semakin biru = semakin jauh jarak tempuhnya
+   })
+
+//update labels
+svg.selectAll("text")
+   .data(data, key) // berdasarkan value
+   .text(function(d) {
+		return d.jumlahbagijarak; // ini tulisan di atas
+   })
+   .attr("text-anchor", "middle")
+   .attr("x", function(d, i) {
+		return xScale(i) + xScale.rangeBand() / 2;
+   })
+   .attr("y", function(d) {
+		return h - yScale(d.jumlahbagijarak) + 14;
+   })
+   				
+}
+	
+console.log(mode);	
+	
+// Add the onclick callback to the button
+d3.select("#sort").on("click", sortBars);
+d3.select("#reset").on("click", reset);
+d3.select("#jarak").on("click", update1);
+d3.select("#jumlahAngkot").on("click", update2);
+d3.select("#rata").on("click", update3);
+	
+});
+
+</script>
+
+
+
+</section>
+
+
+<aside class="data-layout-cell">
+<div id="button">
+	<button class="sort" id="sort" >Sort</button>
+    <button class="sort" id="reset" >Reset</button>
+	<button id="jarak" class="sort" value="JARAK">Jarak Tempuh</button>
+    <button id="jumlahAngkot" class="sort" value="jumlah">Jumlah Angkot</button>
+	<button id="rata" class="sort" value="else">Angkot per Km</button>
+</div>
+
+		
+</aside>
+
+</div>
+
+<footer>
+<div id="left-footer">
+<a href="https://www.dicoding.com" target="_blank">
+  <img src="https://www.dicoding.com/img/logo_putih.png" alt="click to dicoding">
+</a></div>
+<div id="middle-footer">
+<div id="social">
+	<span class='st_facebook'></span>
+	<span class='st_twitter'></span>
+	<span class='st_googleplus'></span>
+	<span class='st_linkedin'></span>
+	<span class='st_tumblr'></span>
+	<span class='st_reddit'></span>
+	<span class='st_email'></span>
+</div>
+<div id="credits">	
+	<p>Data didapatkan dari <a href="http://www.data.go.id" target="_blank">website data.go.id</a></p>
+	<p style="font-size:14px">Abdul Muhit (fantaseen) 2015</p>
+</div>
+
+</div>
+<div id="right-footer">
+
+<a href="http://data.go.id" target="_blank">
+  <img src="http://data.go.id/wp-content/themes/roots-nextdatagoid/assets/img/logo.png" alt="click to data.go.id">
+</a>
+
+
+</div>
+</footer>
+
+</body>
+</html>
